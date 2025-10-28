@@ -280,7 +280,7 @@ useEffect(() => {
                 <article className="activity-item">
                   <div className="activity-icon">✉</div>
                   <div className="activity-content">
-                    <p className="activity-title">Ticket #4833 assigned to Larry David</p>
+                    <p className="activity-title">Ticket #4833 assigned to CodedLibra🌔</p>
                     <p className="activity-meta">Account issue • 3 min ago</p>
                   </div>
                   <div className="activity-badge pending">Pending</div>
