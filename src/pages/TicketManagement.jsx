@@ -5,14 +5,6 @@ import '../styles/TicketManagement.css';
 
 const TicketManagement = () => {
   const navigate = useNavigate();
-  const goToDashboard = () => navigate('/dashboard');
-};
-
-const handleLogout = () => {
-  localStorage.removeItem('ticketapp_session');
-  navigate('/');
-};
-
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   const [tickets, setTickets] = useState([]);
@@ -161,6 +153,13 @@ const handleLogout = () => {
     });
     setFormErrors({});
     setShowEditModal(true);
+  };
+
+  const goToDashboard = () => navigate('/dashboard');
+
+  const handleLogout = () => {
+    localStorage.removeItem('ticketapp_session');
+    navigate('/');
   };
 
   const filteredTickets = tickets.filter(t => {
@@ -506,5 +505,6 @@ const handleLogout = () => {
       )}
     </main>
   );
+};
 
 export default TicketManagement;
