@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect,  } from "react";
 import { ThemeContext } from "../context/ThemeContext.jsx";
-import "../styles/LandinPage.css";
+import "../styles/LandingPage.css";
 import "../styles/global.css";
 import {useTheme } from "../context/ThemeContext.jsx";
 import Navbar from "../components/Navbar";
