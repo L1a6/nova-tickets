@@ -12,7 +12,7 @@ import "../styles/Dashboard.css";
 import "../styles/global.css";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
