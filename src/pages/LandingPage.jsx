@@ -4,9 +4,9 @@ import "../styles/LandingPage.css";
 import "../styles/global.css";
 import {useTheme } from "../context/ThemeContext.jsx";
 import Navbar from "../components/Navbar";
-import headshot1 from "../assets/headshot1.jpg";
-import headshot2 from "../assets/headshot2.jpg";
-import headshot3 from "../assets/headshot3.jpg";
+import headshot1 from "../assets/Headshot1.jpg";
+import headshot2 from "../assets/Headshot2.jpg";
+import headshot3 from "../assets/Headshot3.jpg";
 import { useNavigate } from "react-router-dom"
 
 const LandingPage = () => {
