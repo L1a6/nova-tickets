@@ -157,7 +157,7 @@ useEffect(() => {
           </p>
           <div className="hero-ctas">
             <button onClick={() => navigate("/authentication")} className="btn btn--cta">Start Free Trial</button>
-            <button onClick={() => navigate("/authentication")} className="btn btn--cta">Login</button>
+            <button onClick={() => navigate("/authentication")} className="btn btn-secondary">Login</button>
           </div>
         </section>
 
