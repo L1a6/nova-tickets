@@ -712,6 +712,18 @@ button.cta:hover,
   border: 1px solid;
 }
 
+/* Pause Indicator - Text Color Control */
+html.light-theme .pause-indicator,
+html.light-theme .pause-indicator * {
+  color: #0f172a !important;
+}
+
+html.dark-theme .pause-indicator,
+html.dark-theme .pause-indicator * {
+  color: #ffffff !important;
+}
+
+
 .mobile-menu.dark .mobile-theme {
   background: rgba(30, 41, 59, 0.4);
   border-color: rgba(148, 163, 184, 0.2);

@@ -330,8 +330,8 @@ const navLinks = [
               </header>
               <div className="team-grid">
                 <article className="team-member">
-                  <div className="team-avatar">SC</div>
-                  <p className="team-name">Sarah Chen</p>
+                  <div className="team-avatar">AD</div>
+                  <p className="team-name">Abdul.tsx🥷</p>
                   <p className="team-role">Senior Agent</p>
                   <p className="team-stat">89</p>
                   <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>
@@ -361,9 +361,9 @@ const navLinks = [
                       background: "linear-gradient(135deg, var(--accent-purple), var(--accent-pink))",
                     }}
                   >
-                    AP
+                    LD
                   </div>
-                  <p className="team-name">Alex Park</p>
+                  <p className="team-name">Larry David</p>
                   <p className="team-role">Agent</p>
                   <p className="team-stat">65</p>
                   <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>
@@ -379,7 +379,7 @@ const navLinks = [
                   >
                     JD
                   </div>
-                  <p className="team-name">Jade Doe</p>
+                  <p className="team-name">Alex Park</p>
                   <p className="team-role">Junior Agent</p>
                   <p className="team-stat">58</p>
                   <p style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>
