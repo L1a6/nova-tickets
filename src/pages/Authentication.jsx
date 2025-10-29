@@ -5,7 +5,7 @@ import "../styles/global.css";
 import { ThemeContext } from "../context/ThemeContext";
 import "../components/ProtectedRoute.jsx"
 
-// ✅ InputField component
+// InputField component
 const InputField = ({ label, name, type, placeholder, value, onChange, error }) => (
   <div className="input-field">
     <label htmlFor={name}>
@@ -46,33 +46,28 @@ const Authentication = () => {
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ Redirect if session exists
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("ticketapp_session"));
     if (session) navigate("/dashboard");
   }, [navigate]);
 
-  // ✅ Handle form input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // ✅ Reusable toast
   const showToast = (message, type = "info") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type: "" }), 3500);
   };
 
-  // ✅ Toggle login/signup mode
   const switchMode = () => {
     setIsLogin((prev) => !prev);
     setFormData({ email: "", password: "", confirmPassword: "", fullName: "" });
     setFormErrors({});
   };
 
-  // ✅ Validate form
   const validateForm = () => {
     const errors = {};
     const { email, password, confirmPassword, fullName } = formData;
@@ -100,7 +95,7 @@ const Authentication = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // ✅ Handle submit
+  // Handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -128,7 +123,7 @@ const Authentication = () => {
           };
           localStorage.setItem("ticketapp_session", JSON.stringify(session));
 
-          showToast("✅ Login successful! Redirecting...", "success");
+          showToast("Login successful! Redirecting...", "success");
           setTimeout(() => navigate("/dashboard"), 1200);
         } else {
           showToast("Invalid email or password. Please try again.", "error");
@@ -145,7 +140,7 @@ const Authentication = () => {
             createdAt: new Date().toISOString(),
           };
           localStorage.setItem("ticketapp_users", JSON.stringify([...users, newUser]));
-          showToast("🎉 Account created! Please log in.", "success");
+          showToast("Account created! Please log in.", "success");
           setTimeout(() => setIsLogin(true), 1000);
         }
       }

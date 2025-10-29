@@ -1,4 +1,4 @@
-/* === NAVBAR RESPONSIVE STYLES === */
+/* GLOBAL STYLES */
 
 .navbar {
   display: flex;
@@ -7,9 +7,6 @@
   position: relative;
 }
 
-/* ---------- GLOBAL.CSS ---------- */
-
-/* ---------- ROOT VARIABLES ---------- */
 :root {
   --max-width: 1440px;
   --page-pad: 24px;
@@ -35,7 +32,6 @@
   --card-border: rgba(0,0,0,0.08);
 }
 
-/* ---------- RESETS ---------- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -53,14 +49,12 @@ body {
   transition: background 0.5s ease, color 0.5s ease;
 }
 
-/* ---------- WRAPPER ---------- */
 .wrapper {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--page-pad);
 }
 
-/* ---------- BACKGROUND EFFECTS ---------- */
 .bg-gradient {
   position: fixed;
   inset: 0;
@@ -88,7 +82,6 @@ body {
   50% { opacity: 1; transform: scale(1.1); }
 }
 
-/* ---------- BUTTONS ---------- */
 .btn {
   padding: 10px 20px;
   border-radius: 8px;
@@ -120,7 +113,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* ---------- THEME TOGGLE ---------- */
 #theme-toggle {
   width: 48px;
   height: 28px;
@@ -149,7 +141,7 @@ body {
   transition: all 0.3s ease;
 }
 
-/* ---------- NAVBAR ---------- */
+/* NAVBAR */
 .navbar {
   position: fixed;
   top: 0;
@@ -193,7 +185,7 @@ body {
   color: var(--accent-cyan);
 }
 
-/* ---------- HAMBURGER ---------- */
+/* HAMBURGER */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -225,7 +217,7 @@ body {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* ---------- MOBILE NAV ---------- */
+/* MOBILE NAV */
 @media (max-width: 768px) {
   .nav-links {
     position: absolute;
@@ -254,7 +246,7 @@ body {
   }
 }
 
-/* ---------- SCROLLBAR ---------- */
+/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 8px;
 }

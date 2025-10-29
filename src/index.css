@@ -2,7 +2,6 @@
 @import "./styles/global.css";
 @import "./styles/LandingPage.css";
 
-/* App-level adjustments */
 html, body {
   width: 100%;
   height: 100%;
@@ -19,7 +18,6 @@ html, body {
   border-radius: 3px;
 }
 
-/* Optional fade animation utility */
 @keyframes fadeInUp {
   0% { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }

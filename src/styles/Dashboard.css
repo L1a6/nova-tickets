@@ -67,7 +67,7 @@ body.dark .dashboard-nav {
 }
 
 .nav-logo .nova {
-  color: var(--text-dark); /* dark mode default */
+  color: var(--text-dark); 
   transition: color 0.3s;
 }
 
