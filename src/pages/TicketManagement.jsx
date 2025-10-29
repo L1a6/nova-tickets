@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../context/ThemeContext';
+import Navbar from '../components/Navbar.jsx'; // ✅ imported
 import '../styles/TicketManagement.css';
 
 const TicketManagement = () => {
@@ -23,6 +24,13 @@ const TicketManagement = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ✅ Navbar links (same as in Dashboard.jsx)
+  const navLinks = [
+    { name: 'Dashboard', href: '/Dashboard' },
+    { name: 'Ticket Management', href: '/TicketManagement' },
+    { name: 'Logout', href: '/', variant: 'cta' },
+  ];
 
   // Apply theme class to body
   useEffect(() => {
@@ -63,12 +71,11 @@ const TicketManagement = () => {
   useEffect(() => {
     if (tickets.length > 0) {
       localStorage.setItem('ticketapp_tickets', JSON.stringify(tickets));
-      // Trigger storage event for dashboard to update
       window.dispatchEvent(new Event('storage'));
     }
   }, [tickets]);
 
-  // Listen for storage changes from other tabs/pages
+  // Listen for storage changes
   useEffect(() => {
     const handleStorageChange = () => {
       const updatedTickets = JSON.parse(localStorage.getItem('ticketapp_tickets')) || [];
@@ -77,8 +84,6 @@ const TicketManagement = () => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
-
-  const toggleMenu = () => setMenuOpen(prev => !prev);
 
   const validateForm = () => {
     const errors = {};
@@ -155,13 +160,6 @@ const TicketManagement = () => {
     setShowEditModal(true);
   };
 
-  const goToDashboard = () => navigate('/dashboard');
-
-  const handleLogout = () => {
-    localStorage.removeItem('ticketapp_session');
-    navigate('/');
-  };
-
   const filteredTickets = tickets.filter(t => {
     const matchesSearch = t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (t.description && t.description.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -171,37 +169,15 @@ const TicketManagement = () => {
 
   return (
     <main className="dashboard-container" aria-label="Ticket Management">
-      {/* Navigation */}
-      <nav className="dashboard-nav" role="navigation">
-        <div className="nav-container">
-          <div className="nav-logo">
-            <span className="nova">Nova</span>
-            <span className="ticket">Ticket</span>
-          </div>
 
-          <button
-            className="hamburger"
-            onClick={toggleMenu}
-            aria-label="Toggle Menu"
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
-
-          <div className={`nav-actions ${menuOpen ? 'show' : ''}`}>
-            <button
-              id="theme-toggle"
-              aria-label="Toggle Theme"
-              onClick={toggleTheme}
-            ></button>
-            <button onClick={goToDashboard} className="nav-actions">
-              Dashboard
-            </button>
-            <button onClick={handleLogout} className="nav-actions">
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* ✅ Replaced old nav with global Navbar */}
+      <div data-theme={theme}>
+        <Navbar
+          links={navLinks}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
+      </div>
 
       {/* Toast Notification */}
       {toast.show && (
@@ -210,8 +186,8 @@ const TicketManagement = () => {
         </div>
       )}
 
+      {/* Page Content */}
       <section className="dashboard-content">
-        {/* Header */}
         <header className="tickets-header">
           <div>
             <h1 className="dashboard-title">Ticket Management</h1>
@@ -249,26 +225,6 @@ const TicketManagement = () => {
             <option value="closed">Closed</option>
           </select>
         </div>
-
-        {/* Stats */}
-        <section className="stats-grid">
-          <article className="stat-card stat-card-open">
-            <div className="stat-label">Open</div>
-            <div className="stat-value">{tickets.filter(t => t.status === 'open').length}</div>
-          </article>
-          <article className="stat-card stat-card-progress">
-            <div className="stat-label">In Progress</div>
-            <div className="stat-value">{tickets.filter(t => t.status === 'in_progress').length}</div>
-          </article>
-          <article className="stat-card stat-card-closed">
-            <div className="stat-label">Closed</div>
-            <div className="stat-value">{tickets.filter(t => t.status === 'closed').length}</div>
-          </article>
-          <article className="stat-card stat-card-total">
-            <div className="stat-label">Total</div>
-            <div className="stat-value">{tickets.length}</div>
-          </article>
-        </section>
 
         {/* Tickets List */}
         {filteredTickets.length === 0 ? (

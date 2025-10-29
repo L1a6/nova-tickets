@@ -6,11 +6,13 @@ import {useTheme } from "../context/ThemeContext.jsx";
 import headshot1 from "../assets/Headshot1.jpg";
 import headshot2 from "../assets/Headshot2.jpg";
 import headshot3 from "../assets/Headshot3.jpg";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar.jsx";
+import { Ticket, Home, Info, Mail, LogIn, UserPlus } from 'lucide-react'
 
 const LandingPage = () => {
 const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
+ 
   const screenRef = useRef(null);
   const [paused, setPaused] = useState(false);
   const [numbers, setNumbers] = useState({
@@ -115,33 +117,21 @@ useEffect(() => {
     return () => clearInterval(interval);
   }, []);
 
+  const { theme, toggleTheme } = useTheme();
+const navLinks = [
+  { name: 'Home', href: '#home', icon: Home },
+  { name: 'Features', href: '#features', icon: Info },
+  { name: 'About', href: '#about', icon: Ticket },
+  { name: 'Contact', href: '#contact', icon: Mail },
+];
+
   return (
     <div data-theme={theme}>
-
-      <header className="site-nav" role="banner">
-        <nav className="navbar wrapper" aria-label="Main Navigation">
-          <div className="brand">
-            <span className="nova">Nova</span>
-            <span className="ticket">Ticket</span>
-          </div>
-          <ul className="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-          <div className="nav-actions">
-            <button
-              id="theme-toggle"
-              aria-label="Toggle Theme"
-              onClick={toggleTheme}
-            ></button>
-            <button onClick={() => navigate("/authentication")}  className="btn btn--ghost">Sign In</button>
-            <button onClick={() => navigate("/authentication")} className="btn btn--cta">Get Started</button>
-          </div>
-        </nav>
-      </header>
-
+      <Navbar 
+  links={navLinks} 
+  theme={theme} 
+  onToggleTheme={toggleTheme} 
+/>
       <main className="hero wrapper" role="main">
         <section id="home" className="hero-content" aria-labelledby="hero-title">
           <div className="badge">

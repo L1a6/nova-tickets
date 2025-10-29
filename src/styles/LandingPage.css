@@ -38,6 +38,7 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     transition: background 0.5s ease;
+    margin-top: var(--nav-height);
 }
 
 .wrapper {
@@ -326,11 +327,7 @@ h1 .gradient-text {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #ef4444;
-    box-shadow: 
-        16px 0 0 #eab308,
-        32px 0 0 #10b981,
-        0 0 8px rgba(239, 68, 68, 0.5),
+    box-shadow:  rgba(239, 68, 68, 0.5),
         16px 0 8px rgba(234, 179, 8, 0.5),
         32px 0 8px rgba(16, 185, 129, 0.5);
     z-index: 101;

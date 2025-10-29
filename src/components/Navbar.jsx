@@ -1,109 +1,171 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { ThemeContext } from "../context/ThemeContext";
-import { motion, AnimatePresence } from "framer-motion";
-import "../styles/Navbar.css";
+import { useState, useEffect } from 'react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
+import '../styles/Navbar.css';
 
-const Navbar = ({ navLinks = [] }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState('dark');
-
-  // Listen for theme changes
-  useEffect(() => {
-    const updateTheme = () => {
-      const currentTheme = localStorage.getItem('app-theme') || 'dark';
-      setTheme(currentTheme);
-      document.body.className = currentTheme;
-    };
-
-    updateTheme();
-    window.addEventListener('storage', updateTheme);
-    window.addEventListener('themeChange', updateTheme);
-
-    return () => {
-      window.removeEventListener('storage', updateTheme);
-      window.removeEventListener('themeChange', updateTheme);
-    };
-  }, []);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      const nav = document.querySelector('.universal-nav-actions');
-      const hamburger = document.querySelector('.universal-hamburger');
-      
-      if (menuOpen && nav && hamburger) {
-        if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
-          setMenuOpen(false);
-        }
-      }
-    };
-
-    if (menuOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+const Navbar = ({ links = [], authLinks = [] }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
     }
-  }, [menuOpen]);
+    return true;
+  });
 
-  // Prevent body scroll when menu is open on mobile
+  // Scroll behavior: hide on scroll down
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsVisible(currentScrollY < lastScrollY || currentScrollY < 50);
+      setLastScrollY(currentScrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  // Lock scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
+  }, [isMobileMenuOpen]);
+
+  // Apply theme UNIVERSALLY across ALL pages and components
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    
+    // Remove all existing theme classes
+    root.classList.remove('dark-theme', 'light-theme');
+    body.classList.remove('dark-theme', 'light-theme');
+    
+    // Add the current theme class
+    const themeClass = isDark ? 'dark-theme' : 'light-theme';
+    root.classList.add(themeClass);
+    body.classList.add(themeClass);
+    
+    // Set data attribute for stronger CSS targeting
+    root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    
+    // Apply theme color to body background
+    if (isDark) {
+      body.style.backgroundColor = '#0a0b0f';
+      body.style.color = '#ffffff';
     } else {
-      document.body.style.overflow = 'unset';
+      body.style.backgroundColor = '#f8fafc';
+      body.style.color = '#0f172a';
     }
-  }, [menuOpen]);
+    
+    // Save to localStorage
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // Dispatch custom event so other components can listen
+    window.dispatchEvent(new CustomEvent('themeChange', { 
+      detail: { theme: isDark ? 'dark' : 'light' } 
+    }));
+  }, [isDark]);
 
-  const handleLinkClick = (link) => {
-    setMenuOpen(false);
-    if (link.onClick) {
-      link.onClick();
-    } else if (link.href) {
-      window.location.href = link.href;
-    }
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const toggleTheme = () => setIsDark(prev => !prev);
 
   return (
-    <nav className={`universal-navbar ${theme}`}>
-      <div className="universal-nav-container">
-        {/* Logo */}
-        <div className="universal-nav-logo">
-          <span className="logo-nova">Nova</span>
-          <span className="logo-ticket">Ticket</span>
-        </div>
-        
-        {/* Hamburger Menu Button */}
-        <button 
-          className="universal-hamburger"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
+    <>
+      {/* Navbar */}
+      <nav className={`navbar ${isVisible ? 'visible' : 'hidden'} ${isDark ? 'dark' : 'light'}`}>
+        <div className="navbar-container">
+          {/* Logo */}
+          <a href="/" className="logo">Nova<span>Ticket</span></a>
 
-        {/* Navigation Links */}
-        <div className={`universal-nav-actions ${menuOpen ? 'show' : ''}`}>
-          {navLinks.map((link, index) => (
-            <button
-              key={index}
-              onClick={() => handleLinkClick(link)}
-              className={`universal-nav-link ${link.variant || ''}`}
+          {/* Desktop Links */}
+          <div className="nav-links">
+            {links.map((link) => (
+              <a key={link.name} href={link.href} className="nav-link">
+                {link.name}
+              </a>
+            ))}
+            {authLinks.map((link) => (
+              <a key={link.name} href={link.href} className={`nav-link ${link.variant}`}>
+                {link.name}
+              </a>
+            ))}
+            <button 
+              className="theme-toggle" 
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              {link.icon && <span className="nav-link-icon">{link.icon}</span>}
-              {link.label}
+              {isDark ? (
+                <Sun size={18} className="theme-icon" />
+              ) : (
+                <Moon size={18} className="theme-icon" />
+              )}
             </button>
-          ))}
-        </div>
+          </div>
 
-        {/* Overlay for mobile menu */}
-        {menuOpen && <div className="universal-nav-overlay" onClick={() => setMenuOpen(false)} />}
+          {/* Hamburger Button */}
+          <button 
+            className="hamburger-btn" 
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''} ${isDark ? 'dark' : 'light'}`}>
+        <div className="mobile-menu-links">
+          {links.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a key={link.name} href={link.href} onClick={closeMobileMenu} className="mobile-link">
+                {Icon && <Icon size={20} />}
+                {link.name}
+              </a>
+            );
+          })}
+          {authLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a key={link.name} href={link.href} onClick={closeMobileMenu} className={`mobile-link ${link.variant}`}>
+                {Icon && <Icon size={18} />}
+                {link.name}
+              </a>
+            );
+          })}
+          <button 
+            className="theme-toggle mobile-theme" 
+            onClick={() => { toggleTheme(); closeMobileMenu(); }}
+            aria-label="Toggle theme"
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {isDark ? (
+              <>
+                <Sun size={18} className="theme-icon" />
+                <span>Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon size={18} className="theme-icon" />
+                <span>Dark Mode</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
-    </nav>
+
+      {/* Overlay */}
+      {isMobileMenuOpen && <div className="menu-overlay" onClick={closeMobileMenu}></div>}
+    </>
   );
 };
 
 export default Navbar;
+
+
+
+
 

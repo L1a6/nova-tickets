@@ -12,6 +12,7 @@ import "../styles/Dashboard.css";
 import "../styles/global.css";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar.jsx";
 
 
 const Dashboard = () => {
@@ -121,31 +122,21 @@ const Dashboard = () => {
   const getStatusText = (status) =>
     status === "in_progress" ? "In Progress" : status;
 
+ const navLinks = [
+  { name: "Dashboard", href: "/Dashboard" },
+  { name: "Ticket Management", href: "/TicketManagement" },
+  { name: "Logout", href: "/", variant: "cta" },
+];
+
   return (
+     <div data-theme={theme}>
+  <Navbar 
+    links={navLinks} 
+    theme={theme} 
+    onToggleTheme={toggleTheme} 
+  />
     <main className="dashboard-container" aria-label="Dashboard">
-      <nav className="dashboard-nav" role="navigation">
-        <div className="nav-container">
-          <div className="nav-logo">
-            <span className="nova">Nova</span>
-            <span className="ticket">Ticket</span>
-          </div>
-
-          <div className={`nav-actions ${menuOpen ? "show" : ""}`}>
-            <button
-              id="theme-toggle"
-              aria-label="Toggle Theme"
-              onClick={toggleTheme}
-            ></button>
-            <button onClick={goToTickets} className="nav actions">
-              Ticket Management
-            </button>
-            <button onClick={handleLogout} className="nav actions">
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
+   
       <section className="dashboard-content">
         <header className="dashboard-header">
           <h1 className="dashboard-title">Dashboard Overview</h1>
@@ -241,6 +232,8 @@ const Dashboard = () => {
         </div>
       </footer>
     </main>
+    </div>
+    
   );
 };
 
