@@ -130,14 +130,6 @@ const Dashboard = () => {
             <span className="ticket">Ticket</span>
           </div>
 
-          <button
-            className="hamburger"
-            onClick={toggleMenu}
-            aria-label="Toggle Menu"
-          >
-            ☰
-          </button>
-
           <div className={`nav-actions ${menuOpen ? "show" : ""}`}>
             <button
               id="theme-toggle"

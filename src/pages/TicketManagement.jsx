@@ -503,6 +503,16 @@ const TicketManagement = () => {
           </div>
         </div>
       )}
+      <footer className="footer">
+        <div className="footer-bottom">
+          <p>&copy; 2025 NovaTicket. All rights reserved.</p>
+          <ul className="footer-legal">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </footer>
     </main>
   );
 };
