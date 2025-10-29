@@ -157,7 +157,7 @@ useEffect(() => {
           </p>
           <div className="hero-ctas">
             <button onClick={() => navigate("/authentication")} className="btn btn--cta">Start Free Trial</button>
-            <button className="btn btn--ghost">Watch Demo</button>
+            <button onClick={() => navigate("/authentication")} className="btn btn--cta">Login</button>
           </div>
         </section>
 
@@ -470,8 +470,8 @@ useEffect(() => {
                         Join thousands of teams managing millions of tickets with NovaTicket. Start your free trial today, no credit card required.
                     </p>
                     <div className="cta-actions">
-                        <a href="#" className="btn btn-primary">Get Started</a>
-                        <a href="#" className="btn btn-secondary">Login</a>
+                        <a href="#home" className="btn btn-primary">Get Started</a>
+                        <a href="#home" className="btn btn-secondary">Login</a>
                     </div>
                 </div>
             </div>
