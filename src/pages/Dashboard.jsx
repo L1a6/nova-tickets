@@ -179,9 +179,9 @@ const Dashboard = () => {
     status === "in_progress" ? "In Progress" : status;
 
   const navLinks = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard },
-    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket },
+    { name: 'Home', href: "/", icon: Home },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 

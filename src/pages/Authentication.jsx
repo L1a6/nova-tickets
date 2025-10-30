@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Authentication.css";
 import "../styles/global.css";
 import { ThemeContext } from "../context/ThemeContext";
+import { ArrowLeft } from "lucide-react";
+import Navbar from "../components/Navbar.jsx";
 
 // InputField component
 const InputField = ({ label, name, type, placeholder, value, onChange, error }) => (
@@ -44,9 +46,6 @@ const Authentication = () => {
   const [formErrors, setFormErrors] = useState({});
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
-
-  // REMOVED THE PROBLEMATIC useEffect THAT WAS CAUSING THE LOOP
-  // No automatic redirect on page load - let users access the login page freely
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,9 +111,8 @@ const Authentication = () => {
         );
 
         if (user) {
-          // FIXED: Added isAuthenticated flag that Dashboard checks for
           const session = {
-            isAuthenticated: true, // ← THIS WAS MISSING!
+            isAuthenticated: true, 
             token: btoa(user.email + Date.now()),
             email: user.email,
             fullName: user.fullName,
@@ -144,7 +142,7 @@ const Authentication = () => {
           };
           localStorage.setItem("ticketapp_users", JSON.stringify([...users, newUser]));
           
-          // OPTIONAL: Auto-login after signup
+          // Optional: Auto-login after signup
           const session = {
             isAuthenticated: true,
             token: btoa(newUser.email + Date.now()),
@@ -165,7 +163,18 @@ const Authentication = () => {
     }, 1000);
   };
 
+   const navLinks = [
+    { name: 'Back', href: "/", icon: ArrowLeft },
+   ];
+
   return (
+    <div data-theme={theme}>
+      <Navbar 
+        links={navLinks} 
+        theme={theme} 
+        onToggleTheme={toggleTheme}
+        />
+
     <main className={`auth-page ${theme}`} aria-labelledby="auth-heading">
       {/*  Background shapes */}
       <div className="circle-blue" aria-hidden="true" />
@@ -177,20 +186,6 @@ const Authentication = () => {
           {toast.message}
         </aside>
       )}
-
-      {/* Navbar */}
-      <header className="auth-nav">
-        <div className="nav-logo">
-          <span className="nova" style={{ color: theme === "light" ? "#333" : "#fff" }}>
-            Nova
-          </span>
-          <span className="ticket">Ticket</span>
-        </div>
-
-        <button className="btn btn--ghost back-home-btn" onClick={() => navigate("/")}>
-          Back to Home
-        </button>
-      </header>
 
       {/*Form Section */}
       <section className="auth-container">
@@ -281,6 +276,7 @@ const Authentication = () => {
         </div>
       </footer>
     </main>
+    </div>
   );
 };
 

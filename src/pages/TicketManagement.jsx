@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../context/ThemeContext';
 import Navbar from '../components/Navbar.jsx';
 import '../styles/TicketManagement.css';
+import { LayoutDashboard, LogOut, Ticket, Home } from "lucide-react";
 
 const TicketManagement = () => {
   const navigate = useNavigate();
@@ -33,16 +34,17 @@ const TicketManagement = () => {
     }
   }, [navigate]);
 
-  // ✅ Navbar links with logout handler
+  // Navbar links 
   const handleLogout = () => {
     localStorage.removeItem("ticketapp_session");
     navigate("/", { replace: true });
   };
 
   const navLinks = [
-    { name: 'Dashboard', href: '/Dashboard' },
-    { name: 'Ticket Management', href: '/TicketManagement' },
-    { name: 'Logout', href: '#', onClick: handleLogout, variant: 'cta' },
+    { name: 'Home', href: "/", icon: Home },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket },
+    { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
   // Apply theme class to body
@@ -51,7 +53,7 @@ const TicketManagement = () => {
     document.body.classList.add(theme);
   }, [theme]);
 
-  // ✅ Load tickets from localStorage on mount
+  // Load tickets from localStorage on mount
   useEffect(() => {
     const loadTickets = () => {
       const stored = localStorage.getItem('ticketapp_tickets');
@@ -272,7 +274,7 @@ const TicketManagement = () => {
   return (
     <main className="dashboard-container" aria-label="Ticket Management">
 
-      {/* ✅ Navbar */}
+      {/* Navbar */}
       <div data-theme={theme}>
         <Navbar
           links={navLinks}
