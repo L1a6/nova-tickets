@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [firstName, setFirstName] = useState("");
   const [tickets, setTickets] = useState([]);
 
-  // ✅ Check authentication on mount
+  // Check authentication on mount
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("ticketapp_session"));
     if (!session || !session.isAuthenticated) {
@@ -36,7 +36,7 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  // ✅ Load tickets from localStorage on mount
+  // Load tickets from localStorage on mount
   useEffect(() => {
     const loadTickets = () => {
       const storedTickets = JSON.parse(localStorage.getItem("ticketapp_tickets"));
@@ -90,9 +90,8 @@ const Dashboard = () => {
     loadTickets();
   }, []);
 
-  // ✅ CRITICAL: Listen for ticket updates from TicketManagement
+  // Listen for ticket updates from TicketManagement
   useEffect(() => {
-    // Handler for storage events (cross-tab updates)
     const handleStorageChange = (e) => {
       if (e.key === "ticketapp_tickets" || e.key === null) {
         const updatedTickets = JSON.parse(localStorage.getItem("ticketapp_tickets")) || [];
@@ -100,13 +99,12 @@ const Dashboard = () => {
         console.log('🔄 Dashboard updated from storage event:', updatedTickets.length);
       }
       
-      // Check if session was cleared (logout from another tab)
       if (e.key === "ticketapp_session" && !e.newValue) {
         navigate("/", { replace: true });
       }
     };
 
-    // Handler for custom ticketsUpdated event (same-tab updates)
+    // Handler for custom ticketsUpdated event 
     const handleTicketsUpdated = () => {
       const updatedTickets = JSON.parse(localStorage.getItem("ticketapp_tickets")) || [];
       setTickets(updatedTickets);
@@ -136,13 +134,13 @@ const Dashboard = () => {
     navigate("/", { replace: true });
   };
 
-  // ✅ Calculate statistics from actual tickets
+  // Calculate statistics from actual tickets
   const totalTickets = tickets.length;
   const openTickets = tickets.filter((t) => t.status === "open").length;
   const inProgressTickets = tickets.filter((t) => t.status === "in_progress").length;
   const closedTickets = tickets.filter((t) => t.status === "closed").length;
 
-  // ✅ Generate REAL chart data based on actual ticket creation dates
+  // Real chart data based on actual ticket creation dates
   const generateChartData = () => {
     const last7Days = [];
     const today = new Date();
@@ -180,8 +178,8 @@ const Dashboard = () => {
 
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket },
+    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard },
+    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
@@ -203,7 +201,7 @@ const Dashboard = () => {
             <span className="welcome-text">Welcome, {firstName}!</span>
           </header>
 
-          {/* ✅ Real-time statistics */}
+          {/* Real-time statistics */}
           <section className="stats-grid">
             <article className="stat-card stat-card-total">
               <div className="stat-label">Total Tickets</div>
@@ -225,7 +223,7 @@ const Dashboard = () => {
             </article>
           </section>
 
-          {/* ✅ Dynamic chart based on ticket creation dates */}
+          {/* Dynamic chart based on ticket creation dates */}
           <section className="chart-container">
             <h2 className="chart-title">Ticket Activity (Last 7 Days)</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -253,7 +251,7 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </section>
 
-          {/* ✅ Live ticket list */}
+          {/* Live ticket list */}
           <section>
             <header className="tickets-header">
               <h2 className="tickets-title">Recent Tickets</h2>

@@ -25,7 +25,7 @@ const TicketManagement = () => {
   });
   const [formErrors, setFormErrors] = useState({});
 
-  // ✅ Check authentication on mount
+  // Check authentication on mount
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("ticketapp_session"));
     if (!session || !session.isAuthenticated) {
@@ -42,12 +42,11 @@ const TicketManagement = () => {
 
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket },
+    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard },
+    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
-  // Apply theme class to body
   useEffect(() => {
     document.body.classList.remove('light', 'dark');
     document.body.classList.add(theme);
@@ -96,30 +95,27 @@ const TicketManagement = () => {
     loadTickets();
   }, []);
 
-  // ✅ CRITICAL: Save tickets to localStorage and notify Dashboard
+  // Save tickets to localStorage and notify Dashboard
   const saveTicketsToStorage = (updatedTickets) => {
     try {
-      // Save to localStorage
+    
       localStorage.setItem('ticketapp_tickets', JSON.stringify(updatedTickets));
       
-      // Dispatch custom event for same-tab updates (Dashboard will listen)
       window.dispatchEvent(new Event('ticketsUpdated'));
       
-      // Also dispatch storage event for cross-tab sync
       window.dispatchEvent(new StorageEvent('storage', {
         key: 'ticketapp_tickets',
         newValue: JSON.stringify(updatedTickets),
         url: window.location.href
       }));
       
-      console.log('✅ Tickets saved successfully:', updatedTickets.length);
+      console.log('Tickets saved successfully:', updatedTickets.length);
     } catch (error) {
-      console.error('❌ Error saving tickets:', error);
+      console.error('Error saving tickets:', error);
       showToast('Error saving tickets. Please try again.', 'error');
     }
   };
 
-  // ✅ Listen for storage changes from other tabs
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === 'ticketapp_tickets' || e.key === null) {
@@ -158,7 +154,7 @@ const TicketManagement = () => {
     setTimeout(() => setToast({ show: false, message: '', type: '' }), 4000);
   };
 
-  // ✅ FIXED: Create ticket handler
+  // ticket handler
   const handleCreate = (e) => {
     e.preventDefault();
     
@@ -176,26 +172,23 @@ const TicketManagement = () => {
       created: new Date().toISOString().split('T')[0],
     };
 
-    // Add new ticket to the beginning of the array
+    
     const updatedTickets = [newTicket, ...tickets];
     
-    // Update state
     setTickets(updatedTickets);
     
-    // Save to localStorage and notify Dashboard
     saveTicketsToStorage(updatedTickets);
     
-    // Close modal and reset form
     setShowCreateModal(false);
     setFormData({ title: '', description: '', status: 'open', priority: 'medium' });
     setFormErrors({});
     
-    showToast('✅ Ticket created successfully!', 'success');
+    showToast('Ticket created successfully!', 'success');
     
-    console.log('✅ New ticket created:', newTicket);
+    console.log('New ticket created:', newTicket);
   };
 
-  // ✅ FIXED: Edit ticket handler
+  // Edit ticket handler
   const handleEdit = (e) => {
     e.preventDefault();
     
@@ -228,28 +221,25 @@ const TicketManagement = () => {
     setFormData({ title: '', description: '', status: 'open', priority: 'medium' });
     setFormErrors({});
     
-    showToast('✅ Ticket updated successfully!', 'success');
+    showToast('Ticket updated successfully!', 'success');
     
-    console.log('✅ Ticket updated:', currentTicket.id);
+    console.log('Ticket updated:', currentTicket.id);
   };
 
-  // ✅ FIXED: Delete ticket handler
+  // Delete ticket handler
   const handleDelete = () => {
     const updatedTickets = tickets.filter(t => t.id !== currentTicket.id);
     
-    // Update state
     setTickets(updatedTickets);
     
-    // Save to localStorage and notify Dashboard
     saveTicketsToStorage(updatedTickets);
     
-    // Close modal and reset
     setShowDeleteConfirm(false);
     setCurrentTicket(null);
     
-    showToast('✅ Ticket deleted successfully!', 'success');
+    showToast('Ticket deleted successfully!', 'success');
     
-    console.log('✅ Ticket deleted:', currentTicket.id);
+    console.log('Ticket deleted:', currentTicket.id);
   };
 
   const openEditModal = (ticket) => {
