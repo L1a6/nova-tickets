@@ -129,6 +129,8 @@ const Dashboard = () => {
 
   const goToTickets = () => navigate("/TicketManagement");
 
+  const goToDashboard = () => navigate("/Dashboard");
+
   const handleLogout = () => {
     localStorage.removeItem("ticketapp_session");
     navigate("/", { replace: true });
@@ -178,8 +180,8 @@ const Dashboard = () => {
 
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard },
-    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket },
+    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard, onClick: goToDashboard },
+    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket, onClick: goToTickets },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
@@ -190,6 +192,7 @@ const Dashboard = () => {
         theme={theme} 
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}
+        onClick={goToTickets}
       />
       <main className="dashboard-container" aria-label="Dashboard">
         <section className="dashboard-content">

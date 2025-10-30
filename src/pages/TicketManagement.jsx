@@ -25,7 +25,6 @@ const TicketManagement = () => {
   });
   const [formErrors, setFormErrors] = useState({});
 
-  // Check authentication on mount
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("ticketapp_session"));
     if (!session || !session.isAuthenticated) {
@@ -40,10 +39,15 @@ const TicketManagement = () => {
     navigate("/", { replace: true });
   };
 
+ const goToTickets = () => navigate("/TicketManagement");
+
+  const goToDashboard = () => navigate("/Dashboard");
+
+
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard },
-    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket },
+    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard, onClick: goToDashboard },
+    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket, onClick: goToTickets },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
@@ -52,7 +56,7 @@ const TicketManagement = () => {
     document.body.classList.add(theme);
   }, [theme]);
 
-  // Load tickets from localStorage on mount
+  // Load tickets from localStorage
   useEffect(() => {
     const loadTickets = () => {
       const stored = localStorage.getItem('ticketapp_tickets');
@@ -211,11 +215,7 @@ const TicketManagement = () => {
     
     // Update state
     setTickets(updatedTickets);
-    
-    // Save to localStorage and notify Dashboard
     saveTicketsToStorage(updatedTickets);
-    
-    // Close modal and reset form
     setShowEditModal(false);
     setCurrentTicket(null);
     setFormData({ title: '', description: '', status: 'open', priority: 'medium' });
@@ -271,6 +271,7 @@ const TicketManagement = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           onLogout={handleLogout}
+          onClick={goToTickets}
         />
       </div>
 
