@@ -180,8 +180,8 @@ const Dashboard = () => {
 
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, onClick: goToDashboard },
-    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket, onClick: goToTickets },
+    { name: "Dashboard", icon: LayoutDashboard, onClick: goToDashboard },
+    { name: "Ticket Management", icon: Ticket, onClick: goToTickets },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
