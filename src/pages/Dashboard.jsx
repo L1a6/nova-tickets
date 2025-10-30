@@ -127,9 +127,9 @@ const Dashboard = () => {
     document.body.classList.add(theme);
   }, [theme]);
 
-  const goToTickets = () => navigate("/TicketManagement");
+  const goToTickets = () => navigate("/ticketmanagement");
 
-  const goToDashboard = () => navigate("/Dashboard");
+  const goToDashboard = () => navigate("/dashboard");
 
   const handleLogout = () => {
     localStorage.removeItem("ticketapp_session");
@@ -180,8 +180,8 @@ const Dashboard = () => {
 
   const navLinks = [
     { name: 'Home', href: "/", icon: Home },
-    { name: "Dashboard", href: "/Dashboard", icon: LayoutDashboard, onClick: goToDashboard },
-    { name: "Ticket Management", href: "/TicketManagement", icon: Ticket, onClick: goToTickets },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, onClick: goToDashboard },
+    { name: "Ticket Management", href: "/ticketmanagement", icon: Ticket, onClick: goToTickets },
     { name: "Logout", href: "/", icon: LogOut, onClick: handleLogout, variant: "cta" },
   ];
 
