@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../context/ThemeContext';
-import Navbar from '../components/Navbar.jsx'; // ✅ imported
+import Navbar from '../components/Navbar.jsx';
 import '../styles/TicketManagement.css';
 
 const TicketManagement = () => {
@@ -23,13 +23,26 @@ const TicketManagement = () => {
     priority: 'medium'
   });
   const [formErrors, setFormErrors] = useState({});
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  // ✅ Navbar links (same as in Dashboard.jsx)
+  // ✅ Check authentication on mount
+  useEffect(() => {
+    const session = JSON.parse(localStorage.getItem("ticketapp_session"));
+    if (!session || !session.isAuthenticated) {
+      navigate("/", { replace: true });
+      return;
+    }
+  }, [navigate]);
+
+  // ✅ Navbar links with logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("ticketapp_session");
+    navigate("/", { replace: true });
+  };
+
   const navLinks = [
     { name: 'Dashboard', href: '/Dashboard' },
     { name: 'Ticket Management', href: '/TicketManagement' },
-    { name: 'Logout', href: '/', variant: 'cta' },
+    { name: 'Logout', href: '#', onClick: handleLogout, variant: 'cta' },
   ];
 
   // Apply theme class to body
@@ -38,12 +51,24 @@ const TicketManagement = () => {
     document.body.classList.add(theme);
   }, [theme]);
 
-  // Load tickets from localStorage
+  // ✅ Load tickets from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('ticketapp_tickets');
-    if (stored) {
-      setTickets(JSON.parse(stored));
-    } else {
+    const loadTickets = () => {
+      const stored = localStorage.getItem('ticketapp_tickets');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setTickets(parsed);
+        } catch (error) {
+          console.error('Error parsing tickets:', error);
+          initializeDefaultTickets();
+        }
+      } else {
+        initializeDefaultTickets();
+      }
+    };
+
+    const initializeDefaultTickets = () => {
       const sampleTickets = [
         {
           id: Date.now() + 1,
@@ -64,23 +89,48 @@ const TicketManagement = () => {
       ];
       setTickets(sampleTickets);
       localStorage.setItem('ticketapp_tickets', JSON.stringify(sampleTickets));
-    }
+    };
+
+    loadTickets();
   }, []);
 
-  // Save tickets to localStorage
-  useEffect(() => {
-    if (tickets.length > 0) {
-      localStorage.setItem('ticketapp_tickets', JSON.stringify(tickets));
-      window.dispatchEvent(new Event('storage'));
+  // ✅ CRITICAL: Save tickets to localStorage and notify Dashboard
+  const saveTicketsToStorage = (updatedTickets) => {
+    try {
+      // Save to localStorage
+      localStorage.setItem('ticketapp_tickets', JSON.stringify(updatedTickets));
+      
+      // Dispatch custom event for same-tab updates (Dashboard will listen)
+      window.dispatchEvent(new Event('ticketsUpdated'));
+      
+      // Also dispatch storage event for cross-tab sync
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'ticketapp_tickets',
+        newValue: JSON.stringify(updatedTickets),
+        url: window.location.href
+      }));
+      
+      console.log('✅ Tickets saved successfully:', updatedTickets.length);
+    } catch (error) {
+      console.error('❌ Error saving tickets:', error);
+      showToast('Error saving tickets. Please try again.', 'error');
     }
-  }, [tickets]);
+  };
 
-  // Listen for storage changes
+  // ✅ Listen for storage changes from other tabs
   useEffect(() => {
-    const handleStorageChange = () => {
-      const updatedTickets = JSON.parse(localStorage.getItem('ticketapp_tickets')) || [];
-      setTickets(updatedTickets);
+    const handleStorageChange = (e) => {
+      if (e.key === 'ticketapp_tickets' || e.key === null) {
+        try {
+          const updatedTickets = JSON.parse(localStorage.getItem('ticketapp_tickets')) || [];
+          setTickets(updatedTickets);
+          console.log('🔄 Tickets updated from storage event');
+        } catch (error) {
+          console.error('Error loading tickets from storage:', error);
+        }
+      }
     };
+
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
@@ -106,46 +156,98 @@ const TicketManagement = () => {
     setTimeout(() => setToast({ show: false, message: '', type: '' }), 4000);
   };
 
+  // ✅ FIXED: Create ticket handler
   const handleCreate = (e) => {
     e.preventDefault();
+    
     if (!validateForm()) {
       showToast('Please fix the errors in the form', 'error');
       return;
     }
+
     const newTicket = {
-      ...formData,
-      id: Date.now(),
+      id: Date.now(), // Unique ID
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      status: formData.status,
+      priority: formData.priority,
       created: new Date().toISOString().split('T')[0],
     };
-    setTickets([newTicket, ...tickets]);
+
+    // Add new ticket to the beginning of the array
+    const updatedTickets = [newTicket, ...tickets];
+    
+    // Update state
+    setTickets(updatedTickets);
+    
+    // Save to localStorage and notify Dashboard
+    saveTicketsToStorage(updatedTickets);
+    
+    // Close modal and reset form
     setShowCreateModal(false);
     setFormData({ title: '', description: '', status: 'open', priority: 'medium' });
     setFormErrors({});
-    showToast('Ticket created successfully!', 'success');
+    
+    showToast('✅ Ticket created successfully!', 'success');
+    
+    console.log('✅ New ticket created:', newTicket);
   };
 
+  // ✅ FIXED: Edit ticket handler
   const handleEdit = (e) => {
     e.preventDefault();
+    
     if (!validateForm()) {
       showToast('Please fix the errors in the form', 'error');
       return;
     }
+
     const updatedTickets = tickets.map(t =>
-      t.id === currentTicket.id ? { ...formData, id: t.id, created: t.created } : t
+      t.id === currentTicket.id 
+        ? { 
+            ...t,
+            title: formData.title.trim(),
+            description: formData.description.trim(),
+            status: formData.status,
+            priority: formData.priority,
+          } 
+        : t
     );
+    
+    // Update state
     setTickets(updatedTickets);
+    
+    // Save to localStorage and notify Dashboard
+    saveTicketsToStorage(updatedTickets);
+    
+    // Close modal and reset form
     setShowEditModal(false);
     setCurrentTicket(null);
     setFormData({ title: '', description: '', status: 'open', priority: 'medium' });
     setFormErrors({});
-    showToast('Ticket updated successfully!', 'success');
+    
+    showToast('✅ Ticket updated successfully!', 'success');
+    
+    console.log('✅ Ticket updated:', currentTicket.id);
   };
 
+  // ✅ FIXED: Delete ticket handler
   const handleDelete = () => {
-    setTickets(tickets.filter(t => t.id !== currentTicket.id));
+    const updatedTickets = tickets.filter(t => t.id !== currentTicket.id);
+    
+    // Update state
+    setTickets(updatedTickets);
+    
+    // Save to localStorage and notify Dashboard
+    saveTicketsToStorage(updatedTickets);
+    
+    // Close modal and reset
     setShowDeleteConfirm(false);
     setCurrentTicket(null);
-    showToast('Ticket deleted successfully!', 'success');
+    
+    showToast('✅ Ticket deleted successfully!', 'success');
+    
+    console.log('✅ Ticket deleted:', currentTicket.id);
   };
 
   const openEditModal = (ticket) => {
@@ -170,12 +272,13 @@ const TicketManagement = () => {
   return (
     <main className="dashboard-container" aria-label="Ticket Management">
 
-      {/* ✅ Replaced old nav with global Navbar */}
+      {/* ✅ Navbar */}
       <div data-theme={theme}>
         <Navbar
           links={navLinks}
           theme={theme}
           onToggleTheme={toggleTheme}
+          onLogout={handleLogout}
         />
       </div>
 
@@ -305,6 +408,7 @@ const TicketManagement = () => {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className={formErrors.description ? 'error' : ''}
                   placeholder="Enter ticket description"
+                  rows="4"
                 />
                 {formErrors.description && <p className="error-text">{formErrors.description}</p>}
               </div>
@@ -380,6 +484,7 @@ const TicketManagement = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className={formErrors.description ? 'error' : ''}
+                  rows="4"
                 />
                 {formErrors.description && <p className="error-text">{formErrors.description}</p>}
               </div>
@@ -459,6 +564,7 @@ const TicketManagement = () => {
           </div>
         </div>
       )}
+      
       <footer className="footer">
         <div className="footer-bottom">
           <p>&copy; 2025 NovaTicket. All rights reserved.</p>

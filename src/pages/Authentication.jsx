@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Authentication.css";
 import "../styles/global.css";
 import { ThemeContext } from "../context/ThemeContext";
-import "../components/ProtectedRoute.jsx"
 
 // InputField component
 const InputField = ({ label, name, type, placeholder, value, onChange, error }) => (
@@ -46,10 +45,8 @@ const Authentication = () => {
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const session = JSON.parse(localStorage.getItem("ticketapp_session"));
-    if (session) navigate("/dashboard");
-  }, [navigate]);
+  // REMOVED THE PROBLEMATIC useEffect THAT WAS CAUSING THE LOOP
+  // No automatic redirect on page load - let users access the login page freely
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,7 +112,9 @@ const Authentication = () => {
         );
 
         if (user) {
+          // FIXED: Added isAuthenticated flag that Dashboard checks for
           const session = {
+            isAuthenticated: true, // ← THIS WAS MISSING!
             token: btoa(user.email + Date.now()),
             email: user.email,
             fullName: user.fullName,
@@ -124,7 +123,9 @@ const Authentication = () => {
           localStorage.setItem("ticketapp_session", JSON.stringify(session));
 
           showToast("Login successful! Redirecting...", "success");
-          setTimeout(() => navigate("/dashboard"), 1200);
+          setTimeout(() => {
+            navigate("/dashboard", { replace: true });
+          }, 1200);
         } else {
           showToast("Invalid email or password. Please try again.", "error");
         }
@@ -136,12 +137,27 @@ const Authentication = () => {
         } else {
           const newUser = {
             id: Date.now(),
-            ...formData,
+            email: formData.email,
+            password: formData.password,
+            fullName: formData.fullName,
             createdAt: new Date().toISOString(),
           };
           localStorage.setItem("ticketapp_users", JSON.stringify([...users, newUser]));
-          showToast("Account created! Please log in.", "success");
-          setTimeout(() => setIsLogin(true), 1000);
+          
+          // OPTIONAL: Auto-login after signup
+          const session = {
+            isAuthenticated: true,
+            token: btoa(newUser.email + Date.now()),
+            email: newUser.email,
+            fullName: newUser.fullName,
+            loginTime: new Date().toISOString(),
+          };
+          localStorage.setItem("ticketapp_session", JSON.stringify(session));
+          
+          showToast("Account created successfully! Redirecting...", "success");
+          setTimeout(() => {
+            navigate("/dashboard", { replace: true });
+          }, 1200);
         }
       }
 
@@ -164,17 +180,17 @@ const Authentication = () => {
 
       {/* Navbar */}
       <header className="auth-nav">
-  <div className="nav-logo">
-    <span className="nova" style={{ color: theme === "light" ? "#333" : "#fff" }}>
-      Nova
-    </span>
-    <span className="ticket">Ticket</span>
-  </div>
+        <div className="nav-logo">
+          <span className="nova" style={{ color: theme === "light" ? "#333" : "#fff" }}>
+            Nova
+          </span>
+          <span className="ticket">Ticket</span>
+        </div>
 
-  <button className="btn btn--ghost back-home-btn" onClick={() => navigate("/")}>
-    Back to Home
-  </button>
-</header>
+        <button className="btn btn--ghost back-home-btn" onClick={() => navigate("/")}>
+          Back to Home
+        </button>
+      </header>
 
       {/*Form Section */}
       <section className="auth-container">
@@ -246,7 +262,7 @@ const Authentication = () => {
             </button>
 
             <div className="switch-mode">
-              {isLogin ? "Don’t have an account? " : "Already have an account? "}
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button type="button" onClick={switchMode}>
                 {isLogin ? "Sign Up" : "Sign In"}
               </button>
@@ -254,7 +270,7 @@ const Authentication = () => {
           </form>
         </article>
       </section>
-       <footer className="footer">
+      <footer className="footer">
         <div className="footer-bottom">
           <p>&copy; 2025 NovaTicket. All rights reserved.</p>
           <ul className="footer-legal">
@@ -265,8 +281,6 @@ const Authentication = () => {
         </div>
       </footer>
     </main>
-
-    
   );
 };
 
